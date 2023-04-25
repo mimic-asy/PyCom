@@ -28,34 +28,19 @@ def judge_num(strip_formula):
 #分割した数式の記号を一つにする
 def binary_set(s):
     neat_formulas = []
-    front_binary = "first"
     for i in s:
         if i.isdigit():
-            if front_binary != "first":
-                neat_formulas.append(front_binary)
-                neat_formulas.append(i)
-            else:
-                neat_formulas.append(i)
-        else:
-            if front_binary != "first":
-                if i == "=":
-                        set =[]
-                        set.append(front_binary)
-                        set.append(i)
-                        front_binary = "".join(set)
-                        neat_formulas.append(front_binary)
+            neat_formulas.append(i)
+            continue
 
-                        front_binary = "first"
-                else:
-                    neat_formulas.append(front_binary)
-                    neat_formulas.append(i)
-                    front_binary = "first"
-            
-            else: 
-                if i == "<" or i == "=":
-                    front_binary = i
-                else:
-                    neat_formulas.append(i)
+        if (i == '=' and neat_formulas[-1] == '='
+            or neat_formulas[-1] == '!' or neat_formulas == '<'
+            or neat_formulas[-1] == '>'):
+            neat_formulas[-1] = neat_formulas[-1] + i
+            continue
+        
+        neat_formulas.append(i)
+
  
     return neat_formulas
 
