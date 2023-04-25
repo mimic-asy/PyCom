@@ -11,32 +11,25 @@ def input_formura():
 
 #分割した数式の数字が２桁以上の場合、合体させる
 def judge_num(strip_formula):
-    frontnum = "first"
 
-    organized_numbers= []
-    for i in strip_formula:
-        if i.isdigit():
-            if frontnum == "first":
-                frontnum = i
-            else:
-                frontnum = "".join([frontnum, i])
+    s = []
+    for c in strip_formula:
+        if len(s) == 0:
+            s.append(c)
             continue
 
-        if frontnum != "first":
-            organized_numbers.append(frontnum)
-            
-        if i != "end":
-            organized_numbers.append(i)
-            frontnum = "first"
-        
-    return organized_numbers
+        if c.isdigit() and s[-1].isdigit():
+            s[-1] = s[-1] + c
+            continue
+
+        s.append(c)
+    return s
 
 #分割した数式の記号を一つにする
-def binary_set(organized_numbers):
+def binary_set(s):
     neat_formulas = []
     front_binary = "first"
-    set = []
-    for i in organized_numbers:
+    for i in s:
         if i.isdigit():
             if front_binary != "first":
                 neat_formulas.append(front_binary)
@@ -46,11 +39,12 @@ def binary_set(organized_numbers):
         else:
             if front_binary != "first":
                 if i == "=":
+                        set =[]
                         set.append(front_binary)
                         set.append(i)
                         front_binary = "".join(set)
                         neat_formulas.append(front_binary)
-                        set.clear()
+
                         front_binary = "first"
                 else:
                     neat_formulas.append(front_binary)
