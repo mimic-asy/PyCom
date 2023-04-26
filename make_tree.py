@@ -57,123 +57,126 @@ def new_binary(nodekind, lhs, rhs):
 
 
 def expr(lis,m):
-    print("now expr , lis[",m,"] = ",lis[m])
-    print("-> equaloity")
-    setting = equality(lis,m)
-    return setting[0]
+
+    node,m = equality(lis,m)
+    return node , m
 
 
 def equality(lis,m):
-    setting = relational(lis,m)
-    node = setting[0]
-    m = setting[1]
+    node,m = relational(lis,m)
 
-    for i in range(len(lis)):
-        if consume(lis[i],'=='):
-            m = i
+    while m < len(lis):
+        if consume(lis[m],'=='):
             m+=1
-            node = new_binary(ND_EQ, node, relational(lis,m))
-        elif consume(lis[i],'!='):
-            m = i
+            rhs,m = relational(lis,m)
+            node = new_binary(ND_EQ, node, rhs)
+        elif consume(lis[m],'!='):
             m+=1
-            node = new_binary(ND_NE, node, relational(lis,m))    
+            rhs,m = relational(lis,m)
+            node= new_binary(ND_NE, node, rhs)
         else:
-            print("now equality , lis[",m,"] = ",lis[m])
-            print("-> relational")
-            return node, m
+            break    
+
+    return node, m
         
 
 def relational(lis,m):
-    setting = add(lis,m)
-    node = setting[0]
-    m = setting[1]
-    for i in range(len(lis)):
-        if consume(lis[i], '<'):
-            m = i
+    node,m = add(lis,m)
+
+    while m < len(lis):
+        if consume(lis[m], '<'):
+         
             m+=1
-            node = new_binary(ND_LT,node,add(lis,m))
+            rhs,m = add(lis,m)
+            node = new_binary(ND_LT,node,rhs)
       
-        elif consume(lis[i], '<='):
-            m = i
+        elif consume(lis[m], '<='):
+           
             m+=1
-            node = new_binary(ND_LE,node,add(lis,m))
-        elif consume(lis[i], '>'):
-            m = i
+            rhs,m = add(lis,m)
+            node = new_binary(ND_LE,node,rhs)
+        elif consume(lis[m], '>'):
+           
             m+=1
-            node = new_binary(ND_LT,add(lis,m),node)
+            rhs,m = add(lis,m)
+            node = new_binary(ND_LT,rhs,node)
             
-        elif consume(lis[i], '>='):
-            m = i
+        elif consume(lis[m], '>='):
+         
             m+=1
-            node = new_binary(ND_LT,add(lis,m),node)
+            rhs,m = add(lis,m)
+            node = new_binary(ND_LT,rhs,node)
+        
         else:
-            print("now relational , lis[",m,"] = ",lis[m])
-            print("-> add")
-            return node ,m
+            break
+    return node ,m
 
 def add(lis,m):
-    setting = mul(lis,m)
-    node = setting[0]
-    m = setting[1]
-    for i in range(len(lis)):
-        if consume(lis[i],'+'):
-            print("now add , lis[",m,"] = ",lis[m])
-            n = i +1
-            node = new_binary(ND_ADD, node, mul(lis, n))
-        elif consume(lis[i],'-'):
-            n = i +1
-            node = new_binary(ND_SUB,node,mul(lis,n))
+    node,m = mul(lis,m)
+    
+    while m < len(lis):
+        if consume(lis[m],'+'):
+            m += 1
+            rhs,m = add(lis,m)
+            node = new_binary(ND_ADD, node, rhs)
+        elif consume(lis[m],'-'):
+            m +=1
+            rhs,m = add(lis,m)
+            node = new_binary(ND_SUB,node,rhs)
         else:
-            print("now add , lis[",m,"] = ",lis[m])
-            print("-> mul")
-            return node,m
+            break
+            
+    return node,m
 
 def mul(lis,m):
-    setting = unary(lis,m)
-    node = setting[0]
-    m = setting[1]    
-    for i in range(len(lis)):
-        if consume(lis[i],'*'):
-            m = i
+    node,m = unary(lis,m)
+ 
+    while m < len(lis):
+        if consume(lis[m],'*'):
+            m +=1
+            rhs,m = unary(lis,m)
+            node = new_binary(ND_MUL,node,rhs)
+        elif consume(lis[m],'/'):
             m+=1
-            node = new_binary(ND_MUL,node,unary(lis,m))
-        elif consume(lis[i],'/'):
-            m = i
-            m+=1
-            node = new_binary(ND_DIV,node,unary(lis,m))
+            rhs,m = unary(lis,m)
+            node = new_binary(ND_DIV,node,rhs)
         else:
-            print("now mul , lis[",m,"] = ",lis[m])
-            print("-> unary")
-            return node,m
+            break
+
+    return node, m
+    
         
 def unary(lis,m):
     if consume(lis[m],'+'):
         m += 1
-        print("-> second unary")
-        return unary(lis,m)
+        node,m = unary(lis,m)
+        return node ,m
     elif consume(lis[m],'-'):
-        m+= 1
-        return new_binary(ND_SUB,0,unary(lis,m))
+        m += 1
+        rhs,m =unary(lis,m)
+        return new_binary(ND_SUB,0,rhs)
     else:
-        print("now unary , lis[",m,"] = ",lis[m])
-        print("-> primary")
-        return primary(lis,m),m
+        node, m = primary(lis,m) 
+        return node,m
 
 
 def primary(lis,m):
     if consume(lis[m],'('):
         m+=1
-        node = expr(lis,m)
+        node,m= expr(lis,m)
         expect(lis[m],')')
         m+=1
         return node,m
     else: 
         inta = expect_number(lis,m)
         node = new_node(TK_NUM,inta)
-        print("now primary ",node)
         m+=1
         return node,m
 
-lis = ['1','+','2']
-
-print(expr(lis,0))
+lis = ['12','==','22']
+node,m = expr(lis,0)
+print(node.kind)
+left = node.lhs
+print(left.kind,left.val)
+right = node.rhs
+print(right.kind,right.val)

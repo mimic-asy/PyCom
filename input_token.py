@@ -33,12 +33,13 @@ def binary_set(s):
             neat_formulas.append(i)
             continue
 
-        if (i == '=' and neat_formulas[-1] == '='
-            or neat_formulas[-1] == '!' or neat_formulas == '<'
-            or neat_formulas[-1] == '>'):
+        if i == '=' and (neat_formulas[-1] == '='
+                 or neat_formulas[-1] == '!'
+                 or neat_formulas[-1] == '<'
+                 or neat_formulas[-1] == '>'):
             neat_formulas[-1] = neat_formulas[-1] + i
             continue
-        
+            
         neat_formulas.append(i)
 
  
