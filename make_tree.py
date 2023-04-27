@@ -173,10 +173,3 @@ def primary(lis,m):
         m+=1
         return node,m
 
-lis = ['12','==','22']
-node,m = expr(lis,0)
-print(node.kind)
-left = node.lhs
-print(left.kind,left.val)
-right = node.rhs
-print(right.kind,right.val)
